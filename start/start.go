@@ -1,13 +1,12 @@
 package main
-
 import (
-    "context"
-    "log"
+	"context"
 	"fmt"
-	"os"
+	"github.com/Utility-Gods/budgetox/ent"
 	"github.com/joho/godotenv"
-	 "github.com/Utility-Gods/budgetox/ent"
-    _ "github.com/lib/pq"
+	_ "github.com/lib/pq"
+	"log"
+	"os"
 )
 
 func main() {
@@ -27,30 +26,29 @@ func main() {
 
 	client, err := ent.Open("postgres", connectionString)
 	if err != nil {
-        log.Fatalf("failed opening connection to postgres: %v", err)
-    }
-    defer client.Close()
-    // Run the auto migration tool.
-    if err := client.Schema.Create(context.Background()); err != nil {
-        log.Fatalf("failed creating schema resources: %v", err)
-    }
+		log.Fatalf("failed opening connection to postgres: %v", err)
+	}
+	defer client.Close()
+	// Run the auto migration tool.
+	if err := client.Schema.Create(context.Background()); err != nil {
+		log.Fatalf("failed creating schema resources: %v", err)
+	}
 
-	 CreateUser(context.Background(), client); 
-	 
 	log.Println("user was created: ")
 }
 
 func CreateUser(ctx context.Context, client *ent.Client) (*ent.User, error) {
-    u, err := client.User.
-        Create().
+	u, err := client.User.
+		Create().
 		SetID("1").
 		SetName("sid").
-		SetPassword("password").
-        SetAge(30).
-        Save(ctx)
-    if err != nil {
-        return nil, fmt.Errorf("failed creating user: %w", err)
-    }
-    log.Println("user was created: ", u)
-    return u, nil
+		SetEmail("me@sid.com").
+		SetPassword("1234").
+		SetAge(30).
+		Save(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("failed creating user: %w", err)
+	}
+	log.Println("user was created: ", u)
+	return u, nil
 }
